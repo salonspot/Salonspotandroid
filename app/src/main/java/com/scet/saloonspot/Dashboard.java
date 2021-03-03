@@ -235,7 +235,13 @@ public class Dashboard extends AppCompatActivity {
         if (value.equals(Constant.USER)) {
             Toast.makeText(this, "User Login", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Saloon Login", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Saloon Login", Toast.LENGTH_SHORT).show();
+            if (value.equalsIgnoreCase("login")){
+
+            } else {
+
+
+            }
         }
     }
 
@@ -248,20 +254,21 @@ public class Dashboard extends AppCompatActivity {
 
                 for (DataSnapshot datas : dataSnapshot.getChildren()) {
                     String name = datas.child("SaloonName").getValue().toString();
-                    String address = datas.child("SaloonAddress").getValue().toString();
-                    String mobile = datas.child("Mobile").getValue().toString();
+                  //String id = datas.child("id").getValue().toString();
+                    final String address = datas.child("SaloonAddress").getValue().toString();
+                    final String mobile = datas.child("Mobile").getValue().toString();
 
                     String workingHr = "";
                     if (datas.hasChild("Workinghours")) {
                         workingHr = datas.child("Workinghours").child("OpenTime").getValue().toString() + " TO " +
                                 datas.child("Workinghours").child("CloseTime").getValue().toString();
                     }
-                    String area = datas.child("Area").getValue().toString();
-                    String email = datas.child("Email").getValue().toString();
-                    String password = datas.child("Password").getValue().toString();
+                    final String area = datas.child("Area").getValue().toString();
+                    final String email = datas.child("Email").getValue().toString();
+                    final String password = datas.child("Password").getValue().toString();
                     String ext = datas.child("ext").getValue().toString();
                     ext = ext.replace("image/", "");
-                    String id = datas.getKey();
+                    final String id = datas.getKey();
 
                     DataSnapshot ratting = datas.child("Reviews");
                     for (DataSnapshot snapshot : ratting.getChildren()) {
@@ -280,13 +287,48 @@ public class Dashboard extends AppCompatActivity {
                         rat = 0;
                     }
 
+                    if (value.equalsIgnoreCase("login")) {
 
+                        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saloons").child(id).child("Services");
+                        final String finalWorkingHr = workingHr;
+                        final String finalExt = ext;
+                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot datas : dataSnapshot.getChildren()) {
+                                    String name = datas.child("name").getValue().toString();
+                                    String price = datas.child("price").getValue().toString();
+                                    String type = datas.child("type").getValue().toString();
 
-                    Saloon saloon = new Saloon(name, address, mobile, workingHr, area, email, password, "", ext);
-                    saloon.setAvgRating(String.valueOf(rat));
-                    saloon.setId(id);
-                    saloonList.add(saloon);
-                    allsaloonlist.add(saloon);
+                                    Services services = new Services();
+                                    services.setType(type);
+                                    services.setPrice(price);
+                                    services.setName(name);
+
+                                    if (name.equalsIgnoreCase(value)) {
+                                        Saloon saloon = new Saloon(name, address, mobile, finalWorkingHr, area, email, password, "", finalExt);
+                                        saloon.setAvgRating(String.valueOf(rat));
+                                        saloon.setId(id);
+                                        saloonList.add(saloon);
+                                        allsaloonlist.add(saloon);
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    } else {
+                        Saloon saloon = new Saloon(name, address, mobile, workingHr, area, email, password, "", ext);
+                        saloon.setAvgRating(String.valueOf(rat));
+                        saloon.setId(id);
+                        saloonList.add(saloon);
+                        allsaloonlist.add(saloon);
+                    }
+
                 }
 
                 adapter = new SaloonAdapter(Dashboard.this, saloonList);

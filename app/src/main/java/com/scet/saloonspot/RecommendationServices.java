@@ -3,6 +3,8 @@ package com.scet.saloonspot;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -17,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.scet.saloonspot.adapters.ServiceAdapter;
 import com.scet.saloonspot.models.Services;
+import com.scet.saloonspot.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -140,6 +143,16 @@ adapterbind();
         ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.activity_recommendation_listview, R.id.label,listItems2);
         ListView listView = (ListView) findViewById(R.id.recservicename);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(RecommendationServices.this, Dashboard.class);
+                intent.setAction("reco");
+                intent.putExtra(Constant.ARGS_SALOON, listItems2.get(i));
+                startActivity(intent);
+            }
+        });
     }
 
     public static <T> T mostCommon(List<T> list) {

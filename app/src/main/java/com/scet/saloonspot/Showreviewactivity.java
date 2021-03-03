@@ -99,9 +99,9 @@ public class Showreviewactivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot datas: dataSnapshot.getChildren()){
-                    String rating = datas.child("ratings").getValue().toString();
+                    String rating = datas.child("ratting").getValue().toString();
                     String strReview = datas.child("review").getValue().toString();
-                    String struser = datas.child("review").getValue().toString();
+                    String struser = datas.child("userName").getValue().toString();
                    //String type = datas.child("type").getValue().toString();
 
                     Review review = new Review();

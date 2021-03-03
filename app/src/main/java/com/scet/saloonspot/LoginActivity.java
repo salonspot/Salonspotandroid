@@ -33,7 +33,7 @@ import com.scet.saloonspot.utils.Constant;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText edEmail, edPassword;
-    TextView txtSignUp;
+    TextView txtSignUp,forgot_password;
     CheckBox show_hide;
     Button btnLogin;
     CoordinatorLayout coordinatorLayoutlogin;
@@ -78,6 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edEmail = findViewById(R.id.etemail);
         txtSignUp = findViewById(R.id.txtsignup);
         edPassword = findViewById(R.id.etpassword);
+        forgot_password = findViewById(R.id.forgot_password);
         show_hide = findViewById(R.id.show_hide_password);
         coordinatorLayoutlogin = findViewById(R.id.coordinatorLayoutlogin);
         show_hide.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -90,6 +91,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // hide password
                     edPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
                 }
+            }
+        });
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ForgotPasswordActivity.class);
+                startActivity(intent);
             }
         });
         txtSignUp.setOnClickListener(new View.OnClickListener() {
@@ -170,6 +178,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             AppUtils.setValue(LoginActivity.this, Constant.ISSALON, false);
                                             value = Constant.USER;
                                             Intent intent = new Intent(LoginActivity.this, Dashboard.class);
+                                            intent.setAction("login");
                                             intent.putExtra(Constant.ARGS_SALOON, value);
                                             startActivity(intent);
                                             finish();

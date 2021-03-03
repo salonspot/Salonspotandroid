@@ -36,6 +36,7 @@
         <activity android:name=".Dashboard" />
         <activity android:name=".Registration" />
         <activity android:name=".saloonchatmain" />
+        <activity android:name=".ForgotPasswordActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
