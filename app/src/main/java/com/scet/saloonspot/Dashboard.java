@@ -366,6 +366,10 @@ public class Dashboard extends AppCompatActivity {
                 startActivity(intent);
                 //ShowAppMent();
                 return true;
+            case R.id.armod:
+                Intent i1 = new Intent(Dashboard.this, ArCameraModule.class);
+                startActivity(i1);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

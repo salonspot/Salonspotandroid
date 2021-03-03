@@ -121,6 +121,8 @@ public class AppoitmentActivity extends AppCompatActivity {
                         }
                         appoitmentAdapater = new AppoitmentAdapater(AppoitmentActivity.this, requests, loginKey);
                         recyclerView.setAdapter(appoitmentAdapater);
+                        appoitmentAdapater.notifyDataSetChanged();
+
                     }
 
                     ArrayList<Request> servicelist = requests;
@@ -161,6 +163,7 @@ public class AppoitmentActivity extends AppCompatActivity {
                             }
                             appoitmentAdapater = new AppoitmentAdapater(AppoitmentActivity.this, requests, loginKey);
                             recyclerView.setAdapter(appoitmentAdapater);
+                            appoitmentAdapater.notifyDataSetChanged();
 
                         }
                     }
