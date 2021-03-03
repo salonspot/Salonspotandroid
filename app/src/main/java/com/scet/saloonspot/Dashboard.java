@@ -44,19 +44,23 @@ import java.util.Comparator;
 
 public class Dashboard extends AppCompatActivity {
 
+    public static ArrayList<Saloon> copySaloonList = new ArrayList<>();
     String User_id;
     RecyclerView recyclerView;
     ArrayList<Saloon> saloonList = new ArrayList<>();
+    ArrayList<Saloon> rdSaloonList = new ArrayList<>();
     ArrayList<Saloon> allsaloonlist = new ArrayList<>();
     ArrayList<Saloon> locationList = new ArrayList<>();
-    public static ArrayList<Saloon> copySaloonList = new ArrayList<>();
     SaloonAdapter adapter;
     Spinner sortspinner;
     ImageButton aibotid;
-    private FirebaseAuth firebaseAuth;
     String value = "";
+    String action = "";
     int i = 0;
     float rat = 0;
+    ArrayList<Request> requests = new ArrayList<>();
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -71,7 +75,7 @@ public class Dashboard extends AppCompatActivity {
         getIntentData(getIntent());
         getUser();
         getData();
-        User_id = AppUtils.getStringValue(this,Constant.USERID);
+        User_id = AppUtils.getStringValue(this, Constant.USERID);
         aibotid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +102,7 @@ public class Dashboard extends AppCompatActivity {
                 } else if (position == 0) {
                     adapter = new SaloonAdapter(Dashboard.this, allsaloonlist);
                     recyclerView.setAdapter(adapter);
-                } else if (position == 2){
+                } else if (position == 2) {
                     showDialog(Dashboard.this);
                 } else {
                     adapter = new SaloonAdapter(Dashboard.this, allsaloonlist);
@@ -113,7 +117,7 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
-    public void showDialog(Activity activity){
+    public void showDialog(Activity activity) {
         locationList = new ArrayList<>();
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -129,9 +133,9 @@ public class Dashboard extends AppCompatActivity {
         txtVarachcha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int j = 0; j <allsaloonlist.size() ; j++) {
+                for (int j = 0; j < allsaloonlist.size(); j++) {
                     Saloon saloon = allsaloonlist.get(j);
-                    if (saloon.getArea().equalsIgnoreCase(txtVarachcha.getText().toString())){
+                    if (saloon.getArea().equalsIgnoreCase(txtVarachcha.getText().toString())) {
                         locationList.add(saloon);
                     }
                 }
@@ -144,9 +148,9 @@ public class Dashboard extends AppCompatActivity {
         txtAdajan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int j = 0; j <allsaloonlist.size() ; j++) {
+                for (int j = 0; j < allsaloonlist.size(); j++) {
                     Saloon saloon = allsaloonlist.get(j);
-                    if (saloon.getArea().equalsIgnoreCase(txtAdajan.getText().toString())){
+                    if (saloon.getArea().equalsIgnoreCase(txtAdajan.getText().toString())) {
                         locationList.add(saloon);
                     }
                 }
@@ -159,9 +163,9 @@ public class Dashboard extends AppCompatActivity {
         txtKatargam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int j = 0; j <allsaloonlist.size() ; j++) {
+                for (int j = 0; j < allsaloonlist.size(); j++) {
                     Saloon saloon = allsaloonlist.get(j);
-                    if (saloon.getArea().equalsIgnoreCase(txtKatargam.getText().toString())){
+                    if (saloon.getArea().equalsIgnoreCase(txtKatargam.getText().toString())) {
                         locationList.add(saloon);
                     }
                 }
@@ -174,9 +178,9 @@ public class Dashboard extends AppCompatActivity {
         txtVesu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int j = 0; j <allsaloonlist.size() ; j++) {
+                for (int j = 0; j < allsaloonlist.size(); j++) {
                     Saloon saloon = allsaloonlist.get(j);
-                    if (saloon.getArea().equalsIgnoreCase(txtVesu.getText().toString())){
+                    if (saloon.getArea().equalsIgnoreCase(txtVesu.getText().toString())) {
                         locationList.add(saloon);
                     }
                 }
@@ -190,9 +194,9 @@ public class Dashboard extends AppCompatActivity {
         txtAdajan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int j = 0; j <allsaloonlist.size() ; j++) {
+                for (int j = 0; j < allsaloonlist.size(); j++) {
                     Saloon saloon = allsaloonlist.get(j);
-                    if (saloon.getArea().equalsIgnoreCase(txtAdajan.getText().toString())){
+                    if (saloon.getArea().equalsIgnoreCase(txtAdajan.getText().toString())) {
                         locationList.add(saloon);
                     }
                 }
@@ -207,17 +211,17 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void getUser() {
-        boolean isUser = AppUtils.getValue(Dashboard.this,Constant.ISUSER);
-        String userId = AppUtils.getStringValue(Dashboard.this,Constant.USERID);
-        if (isUser){
+        boolean isUser = AppUtils.getValue(Dashboard.this, Constant.ISUSER);
+        String userId = AppUtils.getStringValue(Dashboard.this, Constant.USERID);
+        if (isUser) {
             final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
-                        User user = dataSnapshot.getValue(User.class);
-                        AppUtils.storeUser(Dashboard.this, Constant.ARGS_USER,user);
+                    User user = dataSnapshot.getValue(User.class);
+                    AppUtils.storeUser(Dashboard.this, Constant.ARGS_USER, user);
 //                    }
                 }
 
@@ -232,11 +236,12 @@ public class Dashboard extends AppCompatActivity {
 
     private void getIntentData(Intent intent) {
         value = intent.getStringExtra(Constant.ARGS_SALOON);
+        action = intent.getAction();
         if (value.equals(Constant.USER)) {
             Toast.makeText(this, "User Login", Toast.LENGTH_SHORT).show();
         } else {
             //Toast.makeText(this, "Saloon Login", Toast.LENGTH_SHORT).show();
-            if (value.equalsIgnoreCase("login")){
+            if (value.equalsIgnoreCase("login")) {
 
             } else {
 
@@ -253,8 +258,8 @@ public class Dashboard extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot datas : dataSnapshot.getChildren()) {
-                    String name = datas.child("SaloonName").getValue().toString();
-                  //String id = datas.child("id").getValue().toString();
+                    final String saloonName = datas.child("SaloonName").getValue().toString();
+                    //String id = datas.child("id").getValue().toString();
                     final String address = datas.child("SaloonAddress").getValue().toString();
                     final String mobile = datas.child("Mobile").getValue().toString();
 
@@ -287,7 +292,7 @@ public class Dashboard extends AppCompatActivity {
                         rat = 0;
                     }
 
-                    if (!value.equalsIgnoreCase("login")) {
+                    if (!action.equalsIgnoreCase("login")) {
 
                         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saloons").child(id).child("Services");
                         final String finalWorkingHr = workingHr;
@@ -307,16 +312,16 @@ public class Dashboard extends AppCompatActivity {
                                     services.setName(name);
 
                                     if (name.equalsIgnoreCase(value)) {
-                                        Saloon saloon = new Saloon(name, address, mobile, finalWorkingHr, area, email, password, "", finalExt);
+                                        Saloon saloon = new Saloon(saloonName, address, mobile, finalWorkingHr, area, email, password, "", finalExt);
                                         saloon.setAvgRating(String.valueOf(rat));
                                         saloon.setId(id);
-                                        saloonList.add(saloon);
-                                        allsaloonlist.add(saloon);
+                                        rdSaloonList.add(saloon);
+                                        //allsaloonlist.add(saloon);
                                     }
 
                                 }
 
-                                adapter = new SaloonAdapter(Dashboard.this, saloonList);
+                                adapter = new SaloonAdapter(Dashboard.this, rdSaloonList);
                                 recyclerView.setAdapter(adapter);
                             }
 
@@ -327,7 +332,7 @@ public class Dashboard extends AppCompatActivity {
                         });
                     }
 
-                    Saloon saloon = new Saloon(name, address, mobile, workingHr, area, email, password, "", ext);
+                    Saloon saloon = new Saloon(saloonName, address, mobile, workingHr, area, email, password, "", ext);
                     saloon.setAvgRating(String.valueOf(rat));
                     saloon.setId(id);
                     saloonList.add(saloon);
@@ -345,8 +350,6 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_request, menu);
@@ -359,7 +362,7 @@ public class Dashboard extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.appment:
-                Intent intent = new Intent(Dashboard.this,AppoitmentActivity.class);
+                Intent intent = new Intent(Dashboard.this, AppoitmentActivity.class);
                 startActivity(intent);
                 //ShowAppMent();
                 return true;
@@ -367,8 +370,7 @@ public class Dashboard extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    private DatabaseReference mDatabase;
-    ArrayList<Request> requests = new ArrayList<>();
+
     private void ShowAppMent() {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("R_Request").child(User_id);
 
@@ -385,7 +387,7 @@ public class Dashboard extends AppCompatActivity {
 //                request.setStatus(datas.child("Status").getValue().toString());
 //                request.setSaloon_Id(datas.child("salon_id").getValue().toString());
 
-                for(DataSnapshot data: datas.getChildren()){
+                for (DataSnapshot data : datas.getChildren()) {
 
                     Request request = data.getValue(Request.class);
                     requests.add(request);
@@ -404,7 +406,7 @@ public class Dashboard extends AppCompatActivity {
 
                 }
 
-                Log.e("TAGTAG","  "+ requests.size() + " ");
+                Log.e("TAGTAG", "  " + requests.size() + " ");
                 //request.setService(servicesList);
 
             }
@@ -434,14 +436,14 @@ public class Dashboard extends AppCompatActivity {
 //                request.setStatus(datas.child("Status").getValue().toString());
 //                request.setSaloon_Id(datas.child("salon_id").getValue().toString());
 
-                for(DataSnapshot data: datas.getChildren()){
+                for (DataSnapshot data : datas.getChildren()) {
 
                     Request request = data.getValue(Request.class);
                     //request.getSaloon_Id() = apputils.logged
                     requests.add(request);
                 }
 
-                Log.e("TAGTAG","  "+ requests.size() + " ");
+                Log.e("TAGTAG", "  " + requests.size() + " ");
                 //request.setService(servicesList);
 
             }
