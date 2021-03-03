@@ -76,7 +76,6 @@ public class Showreviewactivity extends AppCompatActivity {
                 FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
                 review.setUserName(currentFirebaseUser.getDisplayName());
                 mDatabase.child("Saloons").child(id).child("Reviews").child(mDatabase.push().getKey()).setValue(review);
-
                 edtreview.setText("");
                 rtbreview.setNumStars(0);
                 finish();
@@ -108,7 +107,6 @@ public class Showreviewactivity extends AppCompatActivity {
                     review.setRatting(rating);
                     review.setReview(strReview);
                     reviewsList.add(review);
-
                 }
                 adapter = new ReviewAdapter(Showreviewactivity.this,reviewsList);
                 reviewrecyclerview.setAdapter(adapter);

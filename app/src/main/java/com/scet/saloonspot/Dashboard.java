@@ -287,7 +287,7 @@ public class Dashboard extends AppCompatActivity {
                         rat = 0;
                     }
 
-                    if (value.equalsIgnoreCase("login")) {
+                    if (!value.equalsIgnoreCase("login")) {
 
                         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saloons").child(id).child("Services");
                         final String finalWorkingHr = workingHr;
@@ -296,6 +296,7 @@ public class Dashboard extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for (DataSnapshot datas : dataSnapshot.getChildren()) {
+                                    //saloonList = new ArrayList<>();
                                     String name = datas.child("name").getValue().toString();
                                     String price = datas.child("price").getValue().toString();
                                     String type = datas.child("type").getValue().toString();
@@ -314,6 +315,9 @@ public class Dashboard extends AppCompatActivity {
                                     }
 
                                 }
+
+                                adapter = new SaloonAdapter(Dashboard.this, saloonList);
+                                recyclerView.setAdapter(adapter);
                             }
 
                             @Override
@@ -321,13 +325,13 @@ public class Dashboard extends AppCompatActivity {
 
                             }
                         });
-                    } else {
-                        Saloon saloon = new Saloon(name, address, mobile, workingHr, area, email, password, "", ext);
-                        saloon.setAvgRating(String.valueOf(rat));
-                        saloon.setId(id);
-                        saloonList.add(saloon);
-                        allsaloonlist.add(saloon);
                     }
+
+                    Saloon saloon = new Saloon(name, address, mobile, workingHr, area, email, password, "", ext);
+                    saloon.setAvgRating(String.valueOf(rat));
+                    saloon.setId(id);
+                    saloonList.add(saloon);
+                    allsaloonlist.add(saloon);
 
                 }
 
