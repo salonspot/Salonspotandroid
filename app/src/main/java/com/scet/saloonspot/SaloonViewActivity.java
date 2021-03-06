@@ -131,6 +131,7 @@ public class SaloonViewActivity extends AppCompatActivity implements ServiceAdap
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void getinit() {
         sname = findViewById(R.id.sname);
         semail = findViewById(R.id.semail);

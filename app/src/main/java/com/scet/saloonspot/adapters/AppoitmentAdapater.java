@@ -59,18 +59,20 @@ public class AppoitmentAdapater extends RecyclerView.Adapter<AppoitmentAdapater.
             if (request.getStatus().equalsIgnoreCase("Confirm")) {
                 holder.btnDecline.setVisibility(View.GONE);
                 holder.btnConfirm.setText("Confirmed");
+                holder.txtuser.setText(request.getUser().getUserName());
             } else if(request.getStatus().equalsIgnoreCase("Pending")) {
 
                 holder.llOptions.setVisibility(View.VISIBLE);
                 holder.btnDecline.setVisibility(View.VISIBLE);
                 holder.btnConfirm.setVisibility(View.VISIBLE);
+                holder.txtuser.setText(request.getUser().getUserName());
             }else
             {
                 holder.btnConfirm.setVisibility(View.GONE);
                 holder.btnDecline.setText("Declined");
 
 //                holder.llOptions.setVisibility(View.VISIBLE);
-//                holder.txtuser.setText(request.getUser().getFirstname());
+                holder.txtuser.setText(request.getUser().getUserName());
             }
         }
 
